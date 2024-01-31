@@ -79,3 +79,6 @@ target/
 .python-versi
 
 .idea
+
+.mypy_cache/
+.venv

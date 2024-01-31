@@ -247,7 +247,7 @@ def _set_response_attributes(span, llm_request_type, response):
 
 
 def _build_from_streaming_response(span, llm_request_type, response):
-    print("Streaming messages")
+    logger.debug("Streaming messages")
     complete_response = {"choices": [], "model": ""}
     for item in response:
         if _check_openai_v1():
@@ -332,8 +332,8 @@ def _wrap(tracer, to_wrap, wrapped, instance, args, kwargs):
         return wrapped(*args, **kwargs)
 
     name = to_wrap.get("span_name")
-    print(f"Request: {to_wrap.get('module')}.{to_wrap.get('object')}")
-    print(f"kwargs: {kwargs}")
+    logger.warning(f"Request: {to_wrap.get('module')}.{to_wrap.get('object')}")
+    logger.warning(f"kwargs: {kwargs}")
     llm_request_type = _llm_request_type_by_module_object(
             to_wrap.get("module"), to_wrap.get("object")
     )
@@ -346,7 +346,7 @@ def _wrap(tracer, to_wrap, wrapped, instance, args, kwargs):
                 SpanAttributes.LLM_REQUEST_TYPE: llm_request_type.value,
             },
     )
-    print(llm_request_type)
+    logger.warning(llm_request_type)
 
     if span.is_recording():
         _set_api_attributes(span)
@@ -365,7 +365,7 @@ def _wrap(tracer, to_wrap, wrapped, instance, args, kwargs):
     t = type(response)
 
     fully_qualified_name = f"{t.__module__}.{t.__name__}"
-    print(f"Response type: {fully_qualified_name}")
+    logger.warning(f"Response type: {fully_qualified_name}")
 
     if response:
         try:
@@ -407,7 +407,7 @@ class OpenAIInstrumentor(BaseInstrumentor):
 
     def _instrument(self, **kwargs):
         tracer_provider = kwargs.get("tracer_provider")
-        print(f"Try to instruments. {tracer_provider}")
+        logger.warning(f"Try to instruments. {tracer_provider}")
 
         tracer = get_tracer(__name__, __version__, tracer_provider)
 
